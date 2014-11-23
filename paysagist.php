@@ -82,7 +82,8 @@ function paysagist( $vars = '' ) {
 		global $wp;
 		$protocol = $s = is_ssl() ? 'https' : 'http';
 
-		?><!DOCTYPE html><html>
+		?>
+		<!DOCTYPE html><html>
 			<head>
 				<meta charset="utf-8" />
 				<link rel="stylesheet" href="<?php echo $s ?>://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.1/css/bootstrap.css" />
@@ -107,17 +108,20 @@ function paysagist( $vars = '' ) {
 			</head>
 			<body>
 				<div class="container-fluid"><?php
+					// Build URL for iframes
+					$url = K::get_var( 'url', $_GET, get_home_url() );
+
 					foreach ( $themes as $theme ) {
-						$url = get_home_url(
-							null
-							, add_query_arg(
-								array( 'theme' => $theme )
-								, $wp->request
-							)
+						$src = sprintf( '%s%s%s'
+							, $url 
+							, ( parse_url( $url, PHP_URL_QUERY ) == NULL ) ? '?' : '&'
+							, "theme=$theme"
 						);
-						printf( "\n" . '<div class="col-xs-4"><iframe src="%s" width="100%%" ></iframe></div>' , $url );
+						printf( '%s<div class="col-xs-2"><iframe src="%s" width="100%%" ></iframe></div>', "\n\t\t\t\t\t", $src );
 					}
-				?></div>
+				?>
+				
+				</div>
 			</body>
 		</html><?php
 
