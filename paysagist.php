@@ -92,7 +92,7 @@ function paysagist( $vars = '' ) {
 					body {
 						background: radial-gradient(ellipse at center,rgba(240,183,161,1) 0%,rgba(140,51,16,1) 50%,rgba(117,34,1,1) 51%,rgba(191,110,78,1) 100%);
 						width: 270%;
-						padding: 2em;
+						padding: 2em 2em 0;
 					}
 					iframe {
 
@@ -101,7 +101,7 @@ function paysagist( $vars = '' ) {
 				<script>
 					jQuery( document ).ready( function( $ ) {
 						$( window ).scroll( function() {
-							$( 'iframe' ).css( 'height', 0.9 * $( window ).height() );
+							$( 'iframe' ).css( 'height', .8 * $( window ).height() );
 						} ).scroll();
 					} );
 				</script>
@@ -117,10 +117,20 @@ function paysagist( $vars = '' ) {
 							, ( parse_url( $url, PHP_URL_QUERY ) == NULL ) ? '?' : '&'
 							, "theme=$theme"
 						);
-						printf( '%s<div class="col-xs-2"><iframe src="%s" width="100%%" ></iframe></div>', "\n\t\t\t\t\t", $src );
+						?>
+						<div class="col-xs-2">
+							<div class="panel panel-default">
+								<div class="panel-heading">
+									<h3 class="panel-title"><?php echo $theme; ?></h3>
+								</div>
+								<div class="panel-body">
+									<iframe src="<?php echo $src; ?>" width="100%%" ></iframe>
+								</div>
+							</div>
+						</div>
+						<?php
 					}
 				?>
-				
 				</div>
 			</body>
 		</html><?php
