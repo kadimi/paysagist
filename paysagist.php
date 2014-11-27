@@ -45,7 +45,7 @@ function paysagist( $vars = '' ) {
 	}
 
 	$hook = current_filter();
-	static $theme, $themes;
+	static $t, $theme, $themes;
 
 	if ( 'init' === $hook ) {
 
@@ -69,12 +69,33 @@ function paysagist( $vars = '' ) {
 
 	if ( in_array( $hook, explode( ',', 'option_template,template,option_stylesheet' ) ) ) {
 
-		// Taste the waters
-		$theme = K::get_var( 'theme', $_GET, $vars );
-		$themes = array_keys( wp_get_themes() );
+		/**
+		 * Taste the waters
+		 *
+		 * Populate static variables once
+		 */
+		if( empty( $theme ) ) {
+			$theme = K::get_var( 'theme', $_GET, $vars );
+			$themes = array_keys( wp_get_themes() );
+			$t = wp_get_theme( $theme );
+		}
 
-		// Choose theme
-		return in_array( $theme, $themes ) ? $theme : $vars;
+		// Handle cheating requests like ?theme=cheating
+		if( ! in_array( $theme, $themes ) ) {
+			return $vars;
+		}
+
+		// Return the right parent when using a child theme
+		if( $t->template !== $t->stylesheet ) {
+			switch ( $hook ) {
+			case 'template' :
+			case 'option_template' :
+				$theme = $t->template;
+			}
+		}
+
+		// Choose theme choice
+		return $theme;
 	}
 
 	if( 'paysagist' === K::get_var( 'p', $vars ) ) {
@@ -101,7 +122,7 @@ function paysagist( $vars = '' ) {
 				<script>
 					jQuery( document ).ready( function( $ ) {
 						$( window ).scroll( function() {
-							$( 'iframe' ).css( 'height', .8 * $( window ).height() );
+							$( 'iframe' ).css( 'height', 1.2 * $( window ).height() );
 						} ).scroll();
 					} );
 				</script>
@@ -118,7 +139,7 @@ function paysagist( $vars = '' ) {
 							, "theme=$theme"
 						);
 						?>
-						<div class="col-xs-2">
+						<div class="col-xs-3">
 							<div class="panel panel-default">
 								<div class="panel-heading">
 									<h3 class="panel-title"><?php echo $theme; ?></h3>
